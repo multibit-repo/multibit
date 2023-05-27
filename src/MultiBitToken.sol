@@ -7,7 +7,7 @@ contract MultiBitToken {
     string public name = "MultiBit Token";
     string public symbol = "MUBI";
     uint8 public constant decimals = 18;
-    uint256 public totalSupply = 100000000 * 10**18;
+    uint256 public totalSupply;
     mapping (address => uint256) public balanceOf;
     mapping (address => mapping(address => uint256)) public allowance;
     mapping (address => uint256) public nonces;
@@ -20,7 +20,7 @@ contract MultiBitToken {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     constructor() {
-        _mint(msg.sender, totalSupply);
+        _mint(msg.sender, 100000000 * 10**18);
 
         uint256 chainId;
         assembly {
