@@ -129,6 +129,7 @@ contract Vault {
             require(IBRC20(token).balanceOf(address(this)) >= amount, "insufficient balance");
             IBRC20(token).transfer(to, amount);
         }
+        allowances[token] -= amount;
 
         emit Withdraw(token, to, amount, txid);
     }
