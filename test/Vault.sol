@@ -64,7 +64,7 @@ contract VaultTest is Test {
         uint256 amount = 10000e18;
         string memory txid = "54d0d804f3a2caaf609d6c75c5fe71458f54a834f512c347a495012abf349990";
 
-        bytes32 digest = vault.buildMintSeparator(address(token), to, amount, txid);
+        bytes32 digest = vault.buildWithdrawSeparator(address(token), to, amount, txid);
 
         (uint8 v0, bytes32 r0, bytes32 s0) = vm.sign(signer0PrivKey, digest);
         address _signer0 = ecrecover(digest, v0, r0, s0);
@@ -97,7 +97,7 @@ contract VaultTest is Test {
         uint256 amount = 1 ether;
         string memory txid = "54d0d804f3a2caaf609d6c75c5fe71458f54a834f512c347a495012abf349990";
 
-        bytes32 digest = vault.buildMintSeparator(address(0), to, amount, txid);
+        bytes32 digest = vault.buildWithdrawSeparator(address(0), to, amount, txid);
 
         uint8[] memory vv = new uint8[](3);
         bytes32[] memory rr = new bytes32[](3);
@@ -120,7 +120,7 @@ contract VaultTest is Test {
         uint256 amount = 10000e18;
         string memory txid = "54d0d804f3a2caaf609d6c75c5fe71458f54a834f512c347a495012abf349990";
 
-        bytes32 digest = vault.buildMintSeparator(address(token), to, amount, txid);
+        bytes32 digest = vault.buildWithdrawSeparator(address(token), to, amount, txid);
 
         uint8[] memory vv = new uint8[](3);
         bytes32[] memory rr = new bytes32[](3);

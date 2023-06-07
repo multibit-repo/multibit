@@ -9,7 +9,7 @@ contract Vault {
 
     bytes32 private constant DOMAIN_NAME = keccak256("Vault");
     bytes32 public constant DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
-    bytes32 public constant MINT_TYPEHASH = keccak256(abi.encodePacked("Withdraw(address token,address to,uint256 amount,string txid)"));
+    bytes32 public constant WITHDRAW_TYPEHASH = keccak256(abi.encodePacked("Withdraw(address token,address to,uint256 amount,string txid)"));
     bytes32 public immutable DOMAIN_SEPARATOR;
 
     bool private entered;
@@ -99,21 +99,20 @@ contract Vault {
         bytes32[] calldata s
     ) external nonReentrant {
         require(allowances[token] >= amount, "insufficient allowance");
-        uint256 _length = signers.length;
         require(
-            _length > 0 &&
-            _length == v.length &&
-            _length == r.length &&
-            _length == s.length,
+            signers.length > 0 &&
+            signers.length == v.length &&
+            signers.length == r.length &&
+            signers.length == s.length,
             "invalid signatures"
         );
 
-        bytes32 digest = buildMintSeparator(token, to, amount, txid);
+        bytes32 digest = buildWithdrawSeparator(token, to, amount, txid);
         require(!used[digest], "reuse");
         used[digest] = true;
 
-        address[] memory signatures = new address[](_length);
-        for (uint256 i = 0; i < _length; i++) {
+        address[] memory signatures = new address[](signers.length);
+        for (uint256 i = 0; i < signers.length; i++) {
             address signer = ecrecover(digest, v[i], r[i], s[i]);
             require(authorized[signer], "invalid signer");
             for (uint256 j = 0; j < i; j++) {
@@ -193,11 +192,11 @@ contract Vault {
         emit SignerRemoved(msg.sender, account);
     }
 
-    function buildMintSeparator(address token, address to, uint256 amount, string calldata txid) view public returns (bytes32) {
+    function buildWithdrawSeparator(address token, address to, uint256 amount, string calldata txid) view public returns (bytes32) {
         return keccak256(abi.encodePacked(
             '\x19\x01',
             DOMAIN_SEPARATOR,
-            keccak256(abi.encode(MINT_TYPEHASH, token, to, amount, keccak256(bytes(txid))))
+            keccak256(abi.encode(WITHDRAW_TYPEHASH, token, to, amount, keccak256(bytes(txid))))
         ));
     }
 }
